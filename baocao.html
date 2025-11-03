@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Tiến Độ Cài Phần Mềm</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .stat-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .pulse-dot {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .loading-spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #6366f1;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .gradient-border {
+            position: relative;
+            background: white;
+            border-radius: 1rem;
+        }
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 1rem;
+            padding: 2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+        .chart-container {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        
+        <!-- Header -->
+        <div class="glass-effect rounded-3xl shadow-2xl p-8 mb-8 fade-in">
+            <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                <div class="flex-1">
+                    <div class="flex items-center gap-4 mb-3">
+                        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-3 rounded-2xl shadow-lg">
+                            <span class="text-4xl">📚</span>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                                Tiến Độ Cài Đặt Phần Mềm
+                            </h1>
+                            <p class="text-gray-600 mt-1 font-medium">Kỹ Năng Sống - Dữ liệu realtime</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 mt-4">
+                        <div id="statusIndicator" class="w-3 h-3 rounded-full bg-gray-400 pulse-dot"></div>
+                        <p class="text-sm text-gray-600 font-medium" id="lastUpdate">Đang tải dữ liệu...</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button 
+                        onclick="toggleAutoRefresh()" 
+                        id="autoRefreshBtn"
+                        class="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-5 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl border-2 border-gray-200">
+                        <span id="autoRefreshIcon" class="text-xl">⏸️</span>
+                        <span class="hidden sm:inline">Auto</span>
+                    </button>
+                    <button 
+                        onclick="fetchData()" 
+                        id="refreshBtn"
+                        class="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-2xl">
+                        <span id="refreshIcon" class="text-xl">🔄</span>
+                        <span>Làm mới</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+            <!-- Tổng số trường -->
+            <div class="stat-card bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-xl p-6 text-white fade-in">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-4xl">🏫</span>
+                    <div class="bg-white bg-opacity-20 rounded-lg px-3 py-1">
+                        <span class="text-xs font-bold">TOTAL</span>
+                    </div>
+                </div>
+                <h3 class="text-sm font-semibold opacity-90 mb-2">Tổng số trường</h3>
+                <p class="text-4xl font-black mb-1" id="totalSchools">
+                    <span class="loading-spinner inline-block"></span>
+                </p>
+                <p class="text-xs opacity-75">trường đăng ký</p>
+            </div>
+            
+            <!-- GV đăng ký -->
+            <div class="stat-card bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-xl p-6 text-white fade-in">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-4xl">👥</span>
+                    <div class="bg-white bg-opacity-20 rounded-lg px-3 py-1">
+                        <span class="text-xs font-bold">GV</span>
+                    </div>
+                </div>
+                <h3 class="text-sm font-semibold opacity-90 mb-2">Giáo viên đăng ký</h3>
+                <p class="text-4xl font-black mb-1" id="registered">
+                    <span class="loading-spinner inline-block"></span>
+                </p>
+                <p class="text-xs opacity-75" id="registeredSub">người</p>
+            </div>
+            
+            <!-- Đã cài đặt -->
+            <div class="stat-card bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-xl p-6 text-white fade-in">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-4xl">✅</span>
+                    <div class="bg-white bg-opacity-20 rounded-lg px-3 py-1">
+                        <span class="text-xs font-bold" id="installedPercent">0%</span>
+                    </div>
+                </div>
+                <h3 class="text-sm font-semibold opacity-90 mb-2">Đã cài đặt</h3>
+                <p class="text-4xl font-black mb-1" id="installed">
+                    <span class="loading-spinner inline-block"></span>
+                </p>
+                <p class="text-xs opacity-75">giáo viên</p>
+            </div>
+            
+            <!-- Máy > 10 -->
+            <div class="stat-card bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl shadow-xl p-6 text-white fade-in">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-4xl">💻</span>
+                    <div class="bg-white bg-opacity-20 rounded-lg px-3 py-1">
+                        <span class="text-xs font-bold">PC</span>
+                    </div>
+                </div>
+                <h3 class="text-sm font-semibold opacity-90 mb-2">Trường máy > 10</h3>
+                <p class="text-4xl font-black mb-1" id="moreThan10">
+                    <span class="loading-spinner inline-block"></span>
+                </p>
+                <p class="text-xs opacity-75">trường</p>
+            </div>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Tiến độ trường -->
+            <div class="stat-card bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl shadow-xl p-6 text-white fade-in">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="bg-white bg-opacity-20 p-3 rounded-xl">
+                        <span class="text-2xl">🏫</span>
+                    </div>
+                    <h3 class="text-lg font-bold">Tiến độ trường</h3>
+                </div>
+                <p class="text-5xl font-black mb-3" id="installProgress">0%</p>
+                <p class="text-sm opacity-90 mb-4" id="installProgressSub">0/0 trường</p>
+                <div class="w-full bg-white bg-opacity-25 rounded-full h-3 overflow-hidden backdrop-blur-sm">
+                    <div id="installProgressBar" class="bg-white h-3 rounded-full transition-all duration-1000 ease-out shadow-lg" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <!-- Tiến độ GV -->
+            <div class="stat-card bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl shadow-xl p-6 text-white fade-in">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="bg-white bg-opacity-20 p-3 rounded-xl">
+                        <span class="text-2xl">👨‍🏫</span>
+                    </div>
+                    <h3 class="text-lg font-bold">Tiến độ giáo viên</h3>
+                </div>
+                <p class="text-5xl font-black mb-3" id="teacherProgress">0%</p>
+                <p class="text-sm opacity-90 mb-4" id="teacherProgressSub">0/0 GV</p>
+                <div class="w-full bg-white bg-opacity-25 rounded-full h-3 overflow-hidden backdrop-blur-sm">
+                    <div id="teacherProgressBar" class="bg-white h-3 rounded-full transition-all duration-1000 ease-out shadow-lg" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <!-- Còn lại -->
+            <div class="stat-card bg-gradient-to-br from-orange-600 to-red-600 rounded-2xl shadow-xl p-6 text-white fade-in">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="bg-white bg-opacity-20 p-3 rounded-xl">
+                        <span class="text-2xl">⏳</span>
+                    </div>
+                    <h3 class="text-lg font-bold">Chưa hoàn thành</h3>
+                </div>
+                <p class="text-5xl font-black mb-3" id="remaining">0</p>
+                <p class="text-sm opacity-90 mb-1">giáo viên còn lại</p>
+                <p class="text-xs opacity-75" id="remainingPercent">0%</p>
+            </div>
+        </div>
+
+        <!-- Số tiết Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- 36 tiết -->
+            <div class="stat-card glass-effect rounded-2xl shadow-xl p-6 border-2 border-blue-200 fade-in">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-gradient-to-br from-blue-400 to-blue-600 p-3 rounded-xl shadow-lg">
+                            <span class="text-3xl">📘</span>
+                        </div>
+                        <h3 class="text-xl font-black text-blue-900">36 tiết</h3>
+                    </div>
+                    <div class="bg-blue-100 rounded-lg px-3 py-1">
+                        <span class="text-xs font-bold text-blue-700" id="percent36">0%</span>
+                    </div>
+                </div>
+                <p class="text-5xl font-black text-blue-900 mb-2" id="install36">
+                    <span class="loading-spinner inline-block"></span>
+                </p>
+                <p class="text-sm text-blue-700 font-semibold">trường đăng ký</p>
+            </div>
+            
+            <!-- 72 tiết -->
+            <div class="stat-card glass-effect rounded-2xl shadow-xl p-6 border-2 border-green-200 fade-in">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-gradient-to-br from-green-400 to-green-600 p-3 rounded-xl shadow-lg">
+                            <span class="text-3xl">📗</span>
+                        </div>
+                        <h3 class="text-xl font-black text-green-900">72 tiết</h3>
+                    </div>
+                    <div class="bg-green-100 rounded-lg px-3 py-1">
+                        <span class="text-xs font-bold text-green-700" id="percent72">0%</span>
+                    </div>
+                </div>
+                <p class="text-5xl font-black text-green-900 mb-2" id="install72">
+                    <span class="loading-spinner inline-block"></span>
+                </p>
+                <p class="text-sm text-green-700 font-semibold">trường đăng ký</p>
+            </div>
+            
+            <!-- 108 tiết -->
+            <div class="stat-card glass-effect rounded-2xl shadow-xl p-6 border-2 border-yellow-200 fade-in">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-gradient-to-br from-yellow-400 to-orange-500 p-3 rounded-xl shadow-lg">
+                            <span class="text-3xl">📙</span>
+                        </div>
+                        <h3 class="text-xl font-black text-yellow-900">108 tiết</h3>
+                    </div>
+                    <div class="bg-yellow-100 rounded-lg px-3 py-1">
+                        <span class="text-xs font-bold text-yellow-700" id="percent108">0%</span>
+                    </div>
+                </div>
+                <p class="text-5xl font-black text-yellow-900 mb-2" id="install108">
+                    <span class="loading-spinner inline-block"></span>
+                </p>
+                <p class="text-sm text-yellow-700 font-semibold">trường đăng ký</p>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Bar Chart -->
+            <div class="glass-effect rounded-2xl shadow-2xl p-6 fade-in">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-3">
+                        <span class="text-3xl">📊</span>
+                        Thống kê tổng quan
+                    </h2>
+                    <div class="bg-indigo-100 text-indigo-700 px-4 py-1 rounded-full text-xs font-bold">
+                        OVERVIEW
+                    </div>
+                </div>
+                <div class="chart-container" style="height: 320px;">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Pie Chart -->
+            <div class="glass-effect rounded-2xl shadow-2xl p-6 fade-in">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent flex items-center gap-3">
+                        <span class="text-3xl">🥧</span>
+                        Phân bổ số tiết
+                    </h2>
+                    <div class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs font-bold">
+                        PERIODS
+                    </div>
+                </div>
+                <div class="chart-container" style="height: 320px;">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Stats -->
+        <div class="glass-effect rounded-2xl shadow-2xl p-8 fade-in">
+            <h2 class="text-2xl font-black text-gray-800 mb-6 text-center">📈 Phân tích nâng cao</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="text-center bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-blue-200">
+                    <div class="text-4xl mb-3">🏫</div>
+                    <p class="text-gray-600 text-sm font-semibold mb-2">Tỷ lệ trường đã cài</p>
+                    <p class="text-4xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent" id="schoolCompletionRate">0%</p>
+                    <p class="text-xs text-gray-500 mt-2" id="schoolCompletionSub">0/192 trường</p>
+                </div>
+                <div class="text-center bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border-2 border-green-200">
+                    <div class="text-4xl mb-3">👨‍🏫</div>
+                    <p class="text-gray-600 text-sm font-semibold mb-2">Tỷ lệ GV đã cài</p>
+                    <p class="text-4xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent" id="teacherCompletionRate">0%</p>
+                    <p class="text-xs text-gray-500 mt-2" id="teacherCompletionSub">0/0 GV</p>
+                </div>
+                <div class="text-center bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border-2 border-purple-200">
+                    <div class="text-4xl mb-3">⚡</div>
+                    <p class="text-gray-600 text-sm font-semibold mb-2">Tốc độ triển khai</p>
+                    <p class="text-3xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent" id="deploymentSpeed">-</p>
+                    <p class="text-xs text-gray-500 mt-2">giáo viên/ngày</p>
+                </div>
+                <div class="text-center bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 border-2 border-orange-200">
+                    <div class="text-4xl mb-3">📅</div>
+                    <p class="text-gray-600 text-sm font-semibold mb-2">Dự kiến hoàn thành</p>
+                    <p class="text-3xl font-black bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent" id="estimatedCompletion">-</p>
+                    <p class="text-xs text-gray-500 mt-2">thời gian còn lại</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const SHEET_ID = '1XRwutbGBYRj_gclLjcWc5E4sbP5nKdbehJfb8heWr-g';
+        const SHEET_NAME = 'Tổng';
+        const AUTO_REFRESH_INTERVAL = 30000;
+        
+        let barChart, pieChart;
+        let autoRefreshEnabled = false;
+        let autoRefreshTimer = null;
+        let lastFetchTime = null;
+
+        function parseValue(cellValue) {
+            if (cellValue === null || cellValue === undefined) return 0;
+            if (typeof cellValue === 'number') return cellValue;
+            
+            if (typeof cellValue === 'string') {
+                cellValue = cellValue.trim();
+                
+                if (cellValue.includes('Còn Lại:')) {
+                    const match = cellValue.match(/Còn Lại:\s*(\d+)/i);
+                    return match ? parseInt(match[1]) : 0;
+                }
+                
+                if (cellValue.includes('/')) {
+                    const match = cellValue.match(/(\d+)\s*\//);
+                    return match ? parseInt(match[1]) : 0;
+                }
+                
+                const numMatch = cellValue.match(/^(\d+)/);
+                if (numMatch) return parseInt(numMatch[1]);
+                
+                const num = parseInt(cellValue.replace(/\D/g, ''));
+                return isNaN(num) ? 0 : num;
+            }
+            
+            return 0;
+        }
+
+        function toggleAutoRefresh() {
+            autoRefreshEnabled = !autoRefreshEnabled;
+            const btn = document.getElementById('autoRefreshBtn');
+            const icon = document.getElementById('autoRefreshIcon');
+            
+            if (autoRefreshEnabled) {
+                btn.className = 'flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl border-2 border-green-600';
+                icon.textContent = '▶️';
+                autoRefreshTimer = setInterval(fetchData, AUTO_REFRESH_INTERVAL);
+            } else {
+                btn.className = 'flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-5 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl border-2 border-gray-200';
+                icon.textContent = '⏸️';
+                if (autoRefreshTimer) {
+                    clearInterval(autoRefreshTimer);
+                    autoRefreshTimer = null;
+                }
+            }
+        }
+
+        async function fetchData() {
+            const btn = document.getElementById('refreshBtn');
+            const icon = document.getElementById('refreshIcon');
+            
+            btn.disabled = true;
+            icon.className = 'loading-spinner';
+
+            try {
+                const cells = ['R4', 'R5', 'R6', 'O4', 'O9', 'O10', 'O12', 'O13', 'O14'];
+                
+                const responses = await Promise.all(
+                    cells.map(cell => 
+                        fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}&range=${cell}`)
+                    )
+                );
+                
+                const values = await Promise.all(
+                    responses.map(async (response) => {
+                        if (!response.ok) return 0;
+                        const text = await response.text();
+                        const json = JSON.parse(text.substring(47).slice(0, -2));
+                        
+                        if (json.table && json.table.rows && json.table.rows[0]) {
+                            const cellValue = json.table.rows[0].c[0]?.v;
+                            return parseValue(cellValue);
+                        }
+                        return 0;
+                    })
+                );
+                
+                const data = {
+                    approvedInstall: values[0] || 0,
+                    installed: values[1] || 0,
+                    remainingTeachers: values[2] || 0,
+                    totalRegistered: values[3] || 192,
+                    schoolsInstalled: values[4] || 0,
+                    moreThan10PC: values[5] || 0,
+                    install36: values[6] || 0,
+                    install72: values[7] || 0,
+                    install108: values[8] || 0
+                };
+                
+                updateUI(data);
+                lastFetchTime = new Date();
+                
+                document.getElementById('statusIndicator').className = 'w-3 h-3 rounded-full bg-green-500 pulse-dot';
+                document.getElementById('lastUpdate').textContent = '✅ Cập nhật: ' + lastFetchTime.toLocaleString('vi-VN');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('statusIndicator').className = 'w-3 h-3 rounded-full bg-red-500 pulse-dot';
+                document.getElementById('lastUpdate').textContent = '❌ Lỗi: ' + error.message;
+            } finally {
+                btn.disabled = false;
+                icon.className = '';
+                icon.textContent = '🔄';
+            }
+        }
+
+        function updateUI(data) {
+            // Summary cards
+            document.getElementById('totalSchools').textContent = data.totalRegistered;
+            document.getElementById('registered').textContent = data.approvedInstall;
+            document.getElementById('registeredSub').textContent = `${data.remainingTeachers} chưa cài`;
+            
+            const installPercent = data.approvedInstall > 0 
+                ? ((data.installed / data.approvedInstall) * 100).toFixed(1) 
+                : 0;
+            document.getElementById('installed').textContent = data.installed;
+            document.getElementById('installedPercent').textContent = installPercent + '%';
+            
+            document.getElementById('moreThan10').textContent = data.moreThan10PC;
+            
+            // Progress cards
+            const schoolPercent = data.totalRegistered > 0 
+                ? ((data.schoolsInstalled / data.totalRegistered) * 100).toFixed(1) 
+                : 0;
+            document.getElementById('installProgress').textContent = schoolPercent + '%';
+            document.getElementById('installProgressSub').textContent = `${data.schoolsInstalled}/${data.totalRegistered} trường`;
+            document.getElementById('installProgressBar').style.width = schoolPercent + '%';
+            
+            const teacherPercent = data.approvedInstall > 0 
+                ? ((data.installed / data.approvedInstall) * 100).toFixed(1) 
+                : 0;
+            document.getElementById('teacherProgress').textContent = teacherPercent + '%';
+            document.getElementById('teacherProgressSub').textContent = `${data.installed}/${data.approvedInstall} GV`;
+            document.getElementById('teacherProgressBar').style.width = teacherPercent + '%';
+            
+            document.getElementById('remaining').textContent = data.remainingTeachers;
+            const remainingPercent = data.approvedInstall > 0 
+                ? ((data.remainingTeachers / data.approvedInstall) * 100).toFixed(1) 
+                : 0;
+            document.getElementById('remainingPercent').textContent = remainingPercent + '% chưa hoàn thành';
+            
+            // Số tiết cards
+            const totalPeriods = data.install36 + data.install72 + data.install108;
+            
+            document.getElementById('install36').textContent = data.install36;
+            document.getElementById('percent36').textContent = totalPeriods > 0 
+                ? ((data.install36 / totalPeriods) * 100).toFixed(1) + '%' 
+                : '0%';
+            
+            document.getElementById('install72').textContent = data.install72;
+            document.getElementById('percent72').textContent = totalPeriods > 0 
+                ? ((data.install72 / totalPeriods) * 100).toFixed(1) + '%' 
+                : '0%';
+            
+            document.getElementById('install108').textContent = data.install108;
+            document.getElementById('percent108').textContent = totalPeriods > 0 
+                ? ((data.install108 / totalPeriods) * 100).toFixed(1) + '%' 
+                : '0%';
+
+            // Footer stats - Tỷ lệ trường và GV riêng biệt
+            const TOTAL_SCHOOLS = 192; // Tổng số trường cần cài
+            
+            // Tỷ lệ trường đã cài
+            const schoolCompletionPercent = (data.schoolsInstalled / TOTAL_SCHOOLS * 100).toFixed(1);
+            document.getElementById('schoolCompletionRate').textContent = schoolCompletionPercent + '%';
+            document.getElementById('schoolCompletionSub').textContent = `${data.schoolsInstalled}/${TOTAL_SCHOOLS} trường`;
+            
+            // Tỷ lệ GV đã cài
+            const teacherCompletionPercent = data.approvedInstall > 0 
+                ? ((data.installed / data.approvedInstall) * 100).toFixed(1) 
+                : 0;
+            document.getElementById('teacherCompletionRate').textContent = teacherCompletionPercent + '%';
+            document.getElementById('teacherCompletionSub').textContent = `${data.installed}/${data.approvedInstall} GV`;
+            
+            const daysElapsed = 30;
+            const speedPerDay = (data.installed / daysElapsed).toFixed(1);
+            document.getElementById('deploymentSpeed').textContent = `${speedPerDay}`;
+            
+            if (data.remainingTeachers > 0 && speedPerDay > 0) {
+                const daysRemaining = Math.ceil(data.remainingTeachers / speedPerDay);
+                document.getElementById('estimatedCompletion').textContent = `~${daysRemaining} ngày`;
+            } else {
+                document.getElementById('estimatedCompletion').textContent = '✅ Xong';
+            }
+
+            updateCharts(data);
+        }
+
+        function updateCharts(data) {
+            if (barChart) barChart.destroy();
+            if (pieChart) pieChart.destroy();
+
+            // Bar Chart
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            barChart = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Tổng trường', 'Trường đã cài', 'GV đăng ký', 'GV đã cài', 'GV còn lại'],
+                    datasets: [{
+                        label: 'Số lượng',
+                        data: [
+                            data.totalRegistered,
+                            data.schoolsInstalled, 
+                            data.approvedInstall, 
+                            data.installed,
+                            data.remainingTeachers
+                        ],
+                        backgroundColor: [
+                            'rgba(99, 102, 241, 0.9)',
+                            'rgba(139, 92, 246, 0.9)',
+                            'rgba(16, 185, 129, 0.9)',
+                            'rgba(34, 197, 94, 0.9)',
+                            'rgba(249, 115, 22, 0.9)'
+                        ],
+                        borderColor: [
+                            'rgba(99, 102, 241, 1)',
+                            'rgba(139, 92, 246, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(34, 197, 94, 1)',
+                            'rgba(249, 115, 22, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 12,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            display: false 
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                            padding: 16,
+                            titleFont: { size: 16, weight: 'bold' },
+                            bodyFont: { size: 14 },
+                            cornerRadius: 12,
+                            displayColors: true,
+                            boxWidth: 12,
+                            boxHeight: 12,
+                            boxPadding: 6
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                lineWidth: 1
+                            },
+                            ticks: {
+                                font: { size: 12, weight: '600' },
+                                color: '#6b7280'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: { size: 11, weight: '600' },
+                                color: '#6b7280'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Pie Chart
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            
+            pieChart = new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['36 tiết', '72 tiết', '108 tiết'],
+                    datasets: [{
+                        data: [data.install36, data.install72, data.install108],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.9)',
+                            'rgba(34, 197, 94, 0.9)',
+                            'rgba(251, 191, 36, 0.9)'
+                        ],
+                        borderColor: '#fff',
+                        borderWidth: 4,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: { size: 14, weight: '600' },
+                                color: '#374151',
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                            padding: 16,
+                            cornerRadius: 12,
+                            titleFont: { size: 16, weight: 'bold' },
+                            bodyFont: { size: 14 },
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                    return `${context.label}: ${value} trường (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        window.onload = () => {
+            fetchData();
+        };
+    </script>
+</body>
+</html>
