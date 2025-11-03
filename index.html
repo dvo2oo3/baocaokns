@@ -101,222 +101,222 @@
         </div>
 
         <!-- PHẦN 1: THỐNG KÊ TRƯỜNG -->
-        <div class="mb-8 fade-in">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-2 rounded-lg">
-                    <span class="text-2xl">🏫</span>
+        <div class="mb-6 md:mb-8 fade-in">
+            <div class="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-1.5 md:p-2 rounded-lg">
+                    <span class="text-xl md:text-2xl">🏫</span>
                 </div>
-                <h2 class="text-3xl font-black bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
+                <h2 class="text-xl md:text-3xl font-black bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
                     Thống Kê Trường
                 </h2>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                 <!-- Tổng số trường -->
-                <div class="stat-card bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-xl p-8 text-white">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-5xl">🏫</span>
-                        <div class="bg-white bg-opacity-25 rounded-xl px-4 py-2">
-                            <span class="text-sm font-black">TOTAL</span>
+                <div class="stat-card bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 text-white">
+                    <div class="flex items-center justify-between mb-3 md:mb-4">
+                        <span class="text-3xl md:text-5xl">🏫</span>
+                        <div class="bg-white bg-opacity-25 rounded-lg md:rounded-xl px-2 md:px-4 py-1 md:py-2">
+                            <span class="text-xs md:text-sm font-black">TOTAL</span>
                         </div>
                     </div>
-                    <h3 class="text-base font-bold opacity-90 mb-3">Tổng số trường</h3>
-                    <p class="text-6xl font-black mb-2" id="totalSchools">
+                    <h3 class="text-sm md:text-base font-bold opacity-90 mb-2 md:mb-3">Tổng số trường</h3>
+                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="totalSchools">
                         <span class="loading-spinner"></span>
                     </p>
-                    <p class="text-sm opacity-80">trường đăng ký</p>
+                    <p class="text-xs md:text-sm opacity-80">trường đăng ký</p>
                 </div>
 
                 <!-- Trường đã cài -->
-                <div class="stat-card bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl shadow-xl p-8 text-white">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-5xl">✅</span>
-                        <div class="bg-white bg-opacity-25 rounded-xl px-4 py-2">
-                            <span class="text-sm font-black" id="schoolPercent">0%</span>
+                <div class="stat-card bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 text-white">
+                    <div class="flex items-center justify-between mb-3 md:mb-4">
+                        <span class="text-3xl md:text-5xl">✅</span>
+                        <div class="bg-white bg-opacity-25 rounded-lg md:rounded-xl px-2 md:px-4 py-1 md:py-2">
+                            <span class="text-xs md:text-sm font-black" id="schoolPercent">0%</span>
                         </div>
                     </div>
-                    <h3 class="text-base font-bold opacity-90 mb-3">Trường đã cài</h3>
-                    <p class="text-6xl font-black mb-2" id="schoolsInstalled">
+                    <h3 class="text-sm md:text-base font-bold opacity-90 mb-2 md:mb-3">Trường đã cài</h3>
+                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="schoolsInstalled">
                         <span class="loading-spinner"></span>
                     </p>
-                    <p class="text-sm opacity-80" id="schoolsInstalledSub">0/192</p>
+                    <p class="text-xs md:text-sm opacity-80" id="schoolsInstalledSub">0/192</p>
                 </div>
 
                 <!-- Trường máy > 10 -->
-                <div class="stat-card bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-xl p-8 text-white">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-5xl">💻</span>
-                        <div class="bg-white bg-opacity-25 rounded-xl px-4 py-2">
-                            <span class="text-sm font-black">PC</span>
+                <div class="stat-card bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 text-white">
+                    <div class="flex items-center justify-between mb-3 md:mb-4">
+                        <span class="text-3xl md:text-5xl">💻</span>
+                        <div class="bg-white bg-opacity-25 rounded-lg md:rounded-xl px-2 md:px-4 py-1 md:py-2">
+                            <span class="text-xs md:text-sm font-black">PC</span>
                         </div>
                     </div>
-                    <h3 class="text-base font-bold opacity-90 mb-3">Trường máy > 10</h3>
-                    <p class="text-6xl font-black mb-2" id="moreThan10">
+                    <h3 class="text-sm md:text-base font-bold opacity-90 mb-2 md:mb-3">Trường máy > 10</h3>
+                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="moreThan10">
                         <span class="loading-spinner"></span>
                     </p>
-                    <p class="text-sm opacity-80">trường</p>
+                    <p class="text-xs md:text-sm opacity-80">trường</p>
                 </div>
             </div>
 
             <!-- Progress Bar Trường -->
-            <div class="mt-6 glass-effect rounded-2xl shadow-xl p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xl font-black text-gray-800">Tiến độ trường</h3>
-                    <span class="text-3xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent" id="installProgress">0%</span>
+            <div class="mt-4 md:mt-6 glass-effect rounded-xl md:rounded-2xl shadow-xl p-4 md:p-6">
+                <div class="flex items-center justify-between mb-3 md:mb-4">
+                    <h3 class="text-base md:text-xl font-black text-gray-800">Tiến độ trường</h3>
+                    <span class="text-2xl md:text-3xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent" id="installProgress">0%</span>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-6 overflow-hidden">
-                    <div id="installProgressBar" class="bg-gradient-to-r from-blue-500 to-indigo-600 h-6 rounded-full transition-all duration-1000 ease-out shadow-lg flex items-center justify-end pr-3" style="width: 0%">
+                <div class="w-full bg-gray-200 rounded-full h-5 md:h-6 overflow-hidden">
+                    <div id="installProgressBar" class="bg-gradient-to-r from-blue-500 to-indigo-600 h-5 md:h-6 rounded-full transition-all duration-1000 ease-out shadow-lg flex items-center justify-end pr-2 md:pr-3" style="width: 0%">
                         <span class="text-white text-xs font-bold" id="installProgressText"></span>
                     </div>
                 </div>
-                <p class="text-sm text-gray-600 mt-2" id="installProgressSub">0/192 trường</p>
+                <p class="text-xs md:text-sm text-gray-600 mt-2" id="installProgressSub">0/192 trường</p>
             </div>
         </div>
 
         <div class="section-divider"></div>
 
         <!-- PHẦN 2: THỐNG KÊ GIÁO VIÊN -->
-        <div class="mb-8 fade-in">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="bg-gradient-to-r from-green-500 to-emerald-600 p-2 rounded-lg">
-                    <span class="text-2xl">👥</span>
+        <div class="mb-6 md:mb-8 fade-in">
+            <div class="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                <div class="bg-gradient-to-r from-green-500 to-emerald-600 p-1.5 md:p-2 rounded-lg">
+                    <span class="text-xl md:text-2xl">👥</span>
                 </div>
-                <h2 class="text-3xl font-black bg-gradient-to-r from-green-600 to-emerald-700 bg-clip-text text-transparent">
+                <h2 class="text-xl md:text-3xl font-black bg-gradient-to-r from-green-600 to-emerald-700 bg-clip-text text-transparent">
                     Thống Kê Giáo Viên
                 </h2>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                 <!-- GV đăng ký -->
-                <div class="stat-card bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-xl p-8 text-white">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-5xl">👥</span>
-                        <div class="bg-white bg-opacity-25 rounded-xl px-4 py-2">
-                            <span class="text-sm font-black">TOTAL</span>
+                <div class="stat-card bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 text-white">
+                    <div class="flex items-center justify-between mb-3 md:mb-4">
+                        <span class="text-3xl md:text-5xl">👥</span>
+                        <div class="bg-white bg-opacity-25 rounded-lg md:rounded-xl px-2 md:px-4 py-1 md:py-2">
+                            <span class="text-xs md:text-sm font-black">TOTAL</span>
                         </div>
                     </div>
-                    <h3 class="text-base font-bold opacity-90 mb-3">GV đăng ký</h3>
-                    <p class="text-6xl font-black mb-2" id="registered">
+                    <h3 class="text-sm md:text-base font-bold opacity-90 mb-2 md:mb-3">GV đăng ký</h3>
+                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="registered">
                         <span class="loading-spinner"></span>
                     </p>
-                    <p class="text-sm opacity-80">giáo viên</p>
+                    <p class="text-xs md:text-sm opacity-80">giáo viên</p>
                 </div>
 
                 <!-- GV đã cài -->
-                <div class="stat-card bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl shadow-xl p-8 text-white">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-5xl">✅</span>
-                        <div class="bg-white bg-opacity-25 rounded-xl px-4 py-2">
-                            <span class="text-sm font-black" id="installedPercent">0%</span>
+                <div class="stat-card bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 text-white">
+                    <div class="flex items-center justify-between mb-3 md:mb-4">
+                        <span class="text-3xl md:text-5xl">✅</span>
+                        <div class="bg-white bg-opacity-25 rounded-lg md:rounded-xl px-2 md:px-4 py-1 md:py-2">
+                            <span class="text-xs md:text-sm font-black" id="installedPercent">0%</span>
                         </div>
                     </div>
-                    <h3 class="text-base font-bold opacity-90 mb-3">GV đã cài</h3>
-                    <p class="text-6xl font-black mb-2" id="installed">
+                    <h3 class="text-sm md:text-base font-bold opacity-90 mb-2 md:mb-3">GV đã cài</h3>
+                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="installed">
                         <span class="loading-spinner"></span>
                     </p>
-                    <p class="text-sm opacity-80" id="installedSub">0/0</p>
+                    <p class="text-xs md:text-sm opacity-80" id="installedSub">0/0</p>
                 </div>
 
                 <!-- GV còn lại -->
-                <div class="stat-card bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl shadow-xl p-8 text-white">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-5xl">⏳</span>
-                        <div class="bg-white bg-opacity-25 rounded-xl px-4 py-2">
-                            <span class="text-sm font-black" id="remainingPercent2">0%</span>
+                <div class="stat-card bg-gradient-to-br from-orange-500 to-red-500 rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 text-white">
+                    <div class="flex items-center justify-between mb-3 md:mb-4">
+                        <span class="text-3xl md:text-5xl">⏳</span>
+                        <div class="bg-white bg-opacity-25 rounded-lg md:rounded-xl px-2 md:px-4 py-1 md:py-2">
+                            <span class="text-xs md:text-sm font-black" id="remainingPercent2">0%</span>
                         </div>
                     </div>
-                    <h3 class="text-base font-bold opacity-90 mb-3">GV chưa cài</h3>
-                    <p class="text-6xl font-black mb-2" id="remaining">
+                    <h3 class="text-sm md:text-base font-bold opacity-90 mb-2 md:mb-3">GV chưa cài</h3>
+                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="remaining">
                         <span class="loading-spinner"></span>
                     </p>
-                    <p class="text-sm opacity-80">giáo viên</p>
+                    <p class="text-xs md:text-sm opacity-80">giáo viên</p>
                 </div>
             </div>
 
             <!-- Progress Bar GV -->
-            <div class="mt-6 glass-effect rounded-2xl shadow-xl p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xl font-black text-gray-800">Tiến độ giáo viên</h3>
-                    <span class="text-3xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent" id="teacherProgress">0%</span>
+            <div class="mt-4 md:mt-6 glass-effect rounded-xl md:rounded-2xl shadow-xl p-4 md:p-6">
+                <div class="flex items-center justify-between mb-3 md:mb-4">
+                    <h3 class="text-base md:text-xl font-black text-gray-800">Tiến độ giáo viên</h3>
+                    <span class="text-2xl md:text-3xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent" id="teacherProgress">0%</span>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-6 overflow-hidden">
-                    <div id="teacherProgressBar" class="bg-gradient-to-r from-green-500 to-emerald-600 h-6 rounded-full transition-all duration-1000 ease-out shadow-lg flex items-center justify-end pr-3" style="width: 0%">
+                <div class="w-full bg-gray-200 rounded-full h-5 md:h-6 overflow-hidden">
+                    <div id="teacherProgressBar" class="bg-gradient-to-r from-green-500 to-emerald-600 h-5 md:h-6 rounded-full transition-all duration-1000 ease-out shadow-lg flex items-center justify-end pr-2 md:pr-3" style="width: 0%">
                         <span class="text-white text-xs font-bold" id="teacherProgressText"></span>
                     </div>
                 </div>
-                <p class="text-sm text-gray-600 mt-2" id="teacherProgressSub">0/0 GV</p>
+                <p class="text-xs md:text-sm text-gray-600 mt-2" id="teacherProgressSub">0/0 GV</p>
             </div>
         </div>
 
         <div class="section-divider"></div>
 
         <!-- PHẦN 3: PHÂN BỔ SỐ TIẾT -->
-        <div class="mb-8 fade-in">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="bg-gradient-to-r from-yellow-500 to-orange-500 p-2 rounded-lg">
-                    <span class="text-2xl">📖</span>
+        <div class="mb-6 md:mb-8 fade-in">
+            <div class="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                <div class="bg-gradient-to-r from-yellow-500 to-orange-500 p-1.5 md:p-2 rounded-lg">
+                    <span class="text-xl md:text-2xl">📖</span>
                 </div>
-                <h2 class="text-3xl font-black bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+                <h2 class="text-xl md:text-3xl font-black bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
                     Phân Bổ Số Tiết
                 </h2>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                 <!-- 36 tiết -->
-                <div class="stat-card glass-effect rounded-2xl shadow-xl p-8 border-4 border-blue-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-gradient-to-br from-blue-400 to-blue-600 p-4 rounded-xl shadow-lg">
-                                <span class="text-4xl">📘</span>
+                <div class="stat-card glass-effect rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 border-2 md:border-4 border-blue-200">
+                    <div class="flex items-center justify-between mb-3 md:mb-4">
+                        <div class="flex items-center gap-2 md:gap-3">
+                            <div class="bg-gradient-to-br from-blue-400 to-blue-600 p-2 md:p-4 rounded-lg md:rounded-xl shadow-lg">
+                                <span class="text-2xl md:text-4xl">📘</span>
                             </div>
-                            <h3 class="text-2xl font-black text-blue-900">36 tiết</h3>
+                            <h3 class="text-lg md:text-2xl font-black text-blue-900">36 tiết</h3>
                         </div>
-                        <div class="bg-blue-100 rounded-xl px-4 py-2">
-                            <span class="text-base font-black text-blue-700" id="percent36">0%</span>
+                        <div class="bg-blue-100 rounded-lg md:rounded-xl px-2 md:px-4 py-1 md:py-2">
+                            <span class="text-xs md:text-base font-black text-blue-700" id="percent36">0%</span>
                         </div>
                     </div>
-                    <p class="text-6xl font-black text-blue-900 mb-3" id="install36">
+                    <p class="text-4xl md:text-6xl font-black text-blue-900 mb-2 md:mb-3" id="install36">
                         <span class="loading-spinner"></span>
                     </p>
-                    <p class="text-base text-blue-700 font-bold">trường đăng ký</p>
+                    <p class="text-sm md:text-base text-blue-700 font-bold">trường đăng ký</p>
                 </div>
                 
                 <!-- 72 tiết -->
-                <div class="stat-card glass-effect rounded-2xl shadow-xl p-8 border-4 border-green-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-gradient-to-br from-green-400 to-green-600 p-4 rounded-xl shadow-lg">
-                                <span class="text-4xl">📗</span>
+                <div class="stat-card glass-effect rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 border-2 md:border-4 border-green-200">
+                    <div class="flex items-center justify-between mb-3 md:mb-4">
+                        <div class="flex items-center gap-2 md:gap-3">
+                            <div class="bg-gradient-to-br from-green-400 to-green-600 p-2 md:p-4 rounded-lg md:rounded-xl shadow-lg">
+                                <span class="text-2xl md:text-4xl">📗</span>
                             </div>
-                            <h3 class="text-2xl font-black text-green-900">72 tiết</h3>
+                            <h3 class="text-lg md:text-2xl font-black text-green-900">72 tiết</h3>
                         </div>
-                        <div class="bg-green-100 rounded-xl px-4 py-2">
-                            <span class="text-base font-black text-green-700" id="percent72">0%</span>
+                        <div class="bg-green-100 rounded-lg md:rounded-xl px-2 md:px-4 py-1 md:py-2">
+                            <span class="text-xs md:text-base font-black text-green-700" id="percent72">0%</span>
                         </div>
                     </div>
-                    <p class="text-6xl font-black text-green-900 mb-3" id="install72">
+                    <p class="text-4xl md:text-6xl font-black text-green-900 mb-2 md:mb-3" id="install72">
                         <span class="loading-spinner"></span>
                     </p>
-                    <p class="text-base text-green-700 font-bold">trường đăng ký</p>
+                    <p class="text-sm md:text-base text-green-700 font-bold">trường đăng ký</p>
                 </div>
                 
                 <!-- 108 tiết -->
-                <div class="stat-card glass-effect rounded-2xl shadow-xl p-8 border-4 border-yellow-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-gradient-to-br from-yellow-400 to-orange-500 p-4 rounded-xl shadow-lg">
-                                <span class="text-4xl">📙</span>
+                <div class="stat-card glass-effect rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 border-2 md:border-4 border-yellow-200">
+                    <div class="flex items-center justify-between mb-3 md:mb-4">
+                        <div class="flex items-center gap-2 md:gap-3">
+                            <div class="bg-gradient-to-br from-yellow-400 to-orange-500 p-2 md:p-4 rounded-lg md:rounded-xl shadow-lg">
+                                <span class="text-2xl md:text-4xl">📙</span>
                             </div>
-                            <h3 class="text-2xl font-black text-yellow-900">108 tiết</h3>
+                            <h3 class="text-lg md:text-2xl font-black text-yellow-900">108 tiết</h3>
                         </div>
-                        <div class="bg-yellow-100 rounded-xl px-4 py-2">
-                            <span class="text-base font-black text-yellow-700" id="percent108">0%</span>
+                        <div class="bg-yellow-100 rounded-lg md:rounded-xl px-2 md:px-4 py-1 md:py-2">
+                            <span class="text-xs md:text-base font-black text-yellow-700" id="percent108">0%</span>
                         </div>
                     </div>
-                    <p class="text-6xl font-black text-yellow-900 mb-3" id="install108">
+                    <p class="text-4xl md:text-6xl font-black text-yellow-900 mb-2 md:mb-3" id="install108">
                         <span class="loading-spinner"></span>
                     </p>
-                    <p class="text-base text-yellow-700 font-bold">trường đăng ký</p>
+                    <p class="text-sm md:text-base text-yellow-700 font-bold">trường đăng ký</p>
                 </div>
             </div>
         </div>
@@ -324,62 +324,64 @@
         <div class="section-divider"></div>
 
         <!-- BIỂU ĐỒ -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 fade-in">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8 fade-in">
             <!-- Bar Chart -->
-            <div class="glass-effect rounded-2xl shadow-2xl p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-3">
-                        <span class="text-3xl">📊</span>
-                        Thống kê tổng quan
+            <div class="glass-effect rounded-xl md:rounded-2xl shadow-2xl p-4 md:p-6">
+                <div class="flex items-center justify-between mb-4 md:mb-6">
+                    <h2 class="text-lg md:text-2xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-2 md:gap-3">
+                        <span class="text-2xl md:text-3xl">📊</span>
+                        <span class="hidden sm:inline">Thống kê tổng quan</span>
+                        <span class="sm:hidden">Tổng quan</span>
                     </h2>
                 </div>
-                <div style="height: 350px; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 1rem; padding: 1.5rem;">
+                <div style="height: 280px; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 0.75rem; padding: 1rem;">
                     <canvas id="barChart"></canvas>
                 </div>
             </div>
             
             <!-- Pie Chart -->
-            <div class="glass-effect rounded-2xl shadow-2xl p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent flex items-center gap-3">
-                        <span class="text-3xl">🥧</span>
-                        Phân bổ số tiết
+            <div class="glass-effect rounded-xl md:rounded-2xl shadow-2xl p-4 md:p-6">
+                <div class="flex items-center justify-between mb-4 md:mb-6">
+                    <h2 class="text-lg md:text-2xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent flex items-center gap-2 md:gap-3">
+                        <span class="text-2xl md:text-3xl">🥧</span>
+                        <span class="hidden sm:inline">Phân bổ số tiết</span>
+                        <span class="sm:hidden">Số tiết</span>
                     </h2>
                 </div>
-                <div style="height: 350px; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 1rem; padding: 1.5rem;">
+                <div style="height: 280px; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 0.75rem; padding: 1rem;">
                     <canvas id="pieChart"></canvas>
                 </div>
             </div>
         </div>
 
         <!-- PHÂN TÍCH NÂNG CAO -->
-        <div class="glass-effect rounded-3xl shadow-2xl p-8 fade-in">
-            <h2 class="text-3xl font-black text-center mb-8 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+        <div class="glass-effect rounded-xl md:rounded-3xl shadow-2xl p-5 md:p-8 fade-in">
+            <h2 class="text-xl md:text-3xl font-black text-center mb-5 md:mb-8 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 📈 Phân Tích Nâng Cao
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="text-center bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 border-2 border-blue-300">
-                    <div class="text-5xl mb-4">🏫</div>
-                    <p class="text-gray-700 text-sm font-bold mb-3">Tỷ lệ trường hoàn thành</p>
-                    <p class="text-5xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2" id="schoolCompletionRate">0%</p>
-                    <p class="text-xs text-gray-600 font-semibold" id="schoolCompletionSub">0/192 trường</p>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+                <div class="text-center bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl md:rounded-2xl p-4 md:p-6 border-2 border-blue-300">
+                    <div class="text-3xl md:text-5xl mb-2 md:mb-4">🏫</div>
+                    <p class="text-gray-700 text-xs md:text-sm font-bold mb-2 md:mb-3">Tỷ lệ trường</p>
+                    <p class="text-3xl md:text-5xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-1 md:mb-2" id="schoolCompletionRate">0%</p>
+                    <p class="text-xs text-gray-600 font-semibold" id="schoolCompletionSub">0/192</p>
                 </div>
-                <div class="text-center bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 border-2 border-green-300">
-                    <div class="text-5xl mb-4">👨‍🏫</div>
-                    <p class="text-gray-700 text-sm font-bold mb-3">Tỷ lệ GV hoàn thành</p>
-                    <p class="text-5xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-2" id="teacherCompletionRate">0%</p>
-                    <p class="text-xs text-gray-600 font-semibold" id="teacherCompletionSub">0/0 GV</p>
+                <div class="text-center bg-gradient-to-br from-green-50 to-green-100 rounded-xl md:rounded-2xl p-4 md:p-6 border-2 border-green-300">
+                    <div class="text-3xl md:text-5xl mb-2 md:mb-4">👨‍🏫</div>
+                    <p class="text-gray-700 text-xs md:text-sm font-bold mb-2 md:mb-3">Tỷ lệ GV</p>
+                    <p class="text-3xl md:text-5xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-1 md:mb-2" id="teacherCompletionRate">0%</p>
+                    <p class="text-xs text-gray-600 font-semibold" id="teacherCompletionSub">0/0</p>
                 </div>
-                <div class="text-center bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 border-2 border-purple-300">
-                    <div class="text-5xl mb-4">⚡</div>
-                    <p class="text-gray-700 text-sm font-bold mb-3">Tốc độ triển khai</p>
-                    <p class="text-4xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2" id="deploymentSpeed">-</p>
+                <div class="text-center bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl md:rounded-2xl p-4 md:p-6 border-2 border-purple-300">
+                    <div class="text-3xl md:text-5xl mb-2 md:mb-4">⚡</div>
+                    <p class="text-gray-700 text-xs md:text-sm font-bold mb-2 md:mb-3">Tốc độ</p>
+                    <p class="text-2xl md:text-4xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-1 md:mb-2" id="deploymentSpeed">-</p>
                     <p class="text-xs text-gray-600 font-semibold">GV/ngày</p>
                 </div>
-                <div class="text-center bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-6 border-2 border-orange-300">
-                    <div class="text-5xl mb-4">📅</div>
-                    <p class="text-gray-700 text-sm font-bold mb-3">Dự kiến hoàn thành</p>
-                    <p class="text-4xl font-black bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-2" id="estimatedCompletion">-</p>
+                <div class="text-center bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl md:rounded-2xl p-4 md:p-6 border-2 border-orange-300">
+                    <div class="text-3xl md:text-5xl mb-2 md:mb-4">📅</div>
+                    <p class="text-gray-700 text-xs md:text-sm font-bold mb-2 md:mb-3">Hoàn thành</p>
+                    <p class="text-2xl md:text-4xl font-black bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-1 md:mb-2" id="estimatedCompletion">-</p>
                     <p class="text-xs text-gray-600 font-semibold">còn lại</p>
                 </div>
             </div>
