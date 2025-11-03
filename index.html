@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Báo Cáo Tiến Độ Cài Phần Mềm</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         
@@ -34,17 +35,68 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .loading-spinner {
-            border: 3px solid #f3f4f6;
-            border-top: 3px solid #6366f1;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 0.8s linear infinite;
             display: inline-block;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s ease-in-out infinite;
         }
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        .refresh-icon {
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .refresh-icon.spinning {
+            animation: smoothSpin 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes smoothSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        .btn-auto {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-auto::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        .btn-auto.active::before {
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        .btn-refresh {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-refresh::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        .btn-refresh:active::after {
+            width: 300px;
+            height: 300px;
         }
         .glass-effect {
             background: rgba(255, 255, 255, 0.95);
@@ -55,6 +107,23 @@
             height: 3px;
             background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent);
             margin: 2rem 0;
+        }
+        .countdown-circle {
+            width: 32px;
+            height: 32px;
+            position: relative;
+        }
+        .countdown-svg {
+            transform: rotate(-90deg);
+        }
+        .countdown-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 11px;
+            font-weight: bold;
+            color: #10b981;
         }
     </style>
 </head>
@@ -81,19 +150,26 @@
                         <p class="text-sm text-gray-600 font-medium" id="lastUpdate">Đang tải dữ liệu...</p>
                     </div>
                 </div>
-                <div class="flex gap-3">
+                <div class="flex gap-3 items-center">
+                    <div id="countdownContainer" class="countdown-circle" style="display: none;">
+                        <svg class="countdown-svg" width="32" height="32">
+                            <circle cx="16" cy="16" r="14" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+                            <circle id="countdownCircle" cx="16" cy="16" r="14" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="87.96" stroke-dashoffset="0"/>
+                        </svg>
+                        <span id="countdownText" class="countdown-text">3</span>
+                    </div>
                     <button 
                         onclick="toggleAutoRefresh()" 
                         id="autoRefreshBtn"
-                        class="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-5 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl border-2 border-gray-200">
-                        <span id="autoRefreshIcon" class="text-xl">⏸️</span>
-                        <span class="hidden sm:inline">Auto</span>
+                        class="btn-auto active flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-5 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-2xl border-2 border-green-400">
+                        <span id="autoRefreshIcon" class="text-xl">▶️</span>
+                        <span class="hidden sm:inline font-bold">Auto</span>
                     </button>
                     <button 
-                        onclick="fetchData()" 
+                        onclick="manualRefresh()" 
                         id="refreshBtn"
-                        class="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-2xl">
-                        <span id="refreshIcon" class="text-xl">🔄</span>
+                        class="btn-refresh flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-2xl hover:scale-105">
+                        <span id="refreshIcon" class="text-xl refresh-icon">🔄</span>
                         <span>Làm mới</span>
                     </button>
                 </div>
@@ -112,7 +188,6 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                <!-- Tổng số trường -->
                 <div class="stat-card bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 text-white">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <span class="text-3xl md:text-5xl">🏫</span>
@@ -121,13 +196,10 @@
                         </div>
                     </div>
                     <h3 class="text-sm md:text-base font-bold opacity-90 mb-2 md:mb-3">Tổng số trường</h3>
-                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="totalSchools">
-                        <span class="loading-spinner"></span>
-                    </p>
+                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="totalSchools">192</p>
                     <p class="text-xs md:text-sm opacity-80">trường đăng ký</p>
                 </div>
 
-                <!-- Trường đã cài -->
                 <div class="stat-card bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 text-white">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <span class="text-3xl md:text-5xl">✅</span>
@@ -136,13 +208,10 @@
                         </div>
                     </div>
                     <h3 class="text-sm md:text-base font-bold opacity-90 mb-2 md:mb-3">Trường đã cài</h3>
-                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="schoolsInstalled">
-                        <span class="loading-spinner"></span>
-                    </p>
+                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="schoolsInstalled">0</p>
                     <p class="text-xs md:text-sm opacity-80" id="schoolsInstalledSub">0/192</p>
                 </div>
 
-                <!-- Trường máy > 10 -->
                 <div class="stat-card bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 text-white">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <span class="text-3xl md:text-5xl">💻</span>
@@ -151,14 +220,11 @@
                         </div>
                     </div>
                     <h3 class="text-sm md:text-base font-bold opacity-90 mb-2 md:mb-3">Trường máy > 10</h3>
-                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="moreThan10">
-                        <span class="loading-spinner"></span>
-                    </p>
+                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="moreThan10">0</p>
                     <p class="text-xs md:text-sm opacity-80">trường</p>
                 </div>
             </div>
 
-            <!-- Progress Bar Trường -->
             <div class="mt-4 md:mt-6 glass-effect rounded-xl md:rounded-2xl shadow-xl p-4 md:p-6">
                 <div class="flex items-center justify-between mb-3 md:mb-4">
                     <h3 class="text-base md:text-xl font-black text-gray-800">Tiến độ trường</h3>
@@ -187,7 +253,6 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                <!-- GV đăng ký -->
                 <div class="stat-card bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 text-white">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <span class="text-3xl md:text-5xl">👥</span>
@@ -196,13 +261,10 @@
                         </div>
                     </div>
                     <h3 class="text-sm md:text-base font-bold opacity-90 mb-2 md:mb-3">GV đăng ký</h3>
-                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="registered">
-                        <span class="loading-spinner"></span>
-                    </p>
+                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="registered">0</p>
                     <p class="text-xs md:text-sm opacity-80">giáo viên</p>
                 </div>
 
-                <!-- GV đã cài -->
                 <div class="stat-card bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 text-white">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <span class="text-3xl md:text-5xl">✅</span>
@@ -211,13 +273,10 @@
                         </div>
                     </div>
                     <h3 class="text-sm md:text-base font-bold opacity-90 mb-2 md:mb-3">GV đã cài</h3>
-                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="installed">
-                        <span class="loading-spinner"></span>
-                    </p>
+                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="installed">0</p>
                     <p class="text-xs md:text-sm opacity-80" id="installedSub">0/0</p>
                 </div>
 
-                <!-- GV còn lại -->
                 <div class="stat-card bg-gradient-to-br from-orange-500 to-red-500 rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 text-white">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <span class="text-3xl md:text-5xl">⏳</span>
@@ -226,14 +285,11 @@
                         </div>
                     </div>
                     <h3 class="text-sm md:text-base font-bold opacity-90 mb-2 md:mb-3">GV chưa cài</h3>
-                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="remaining">
-                        <span class="loading-spinner"></span>
-                    </p>
+                    <p class="text-4xl md:text-6xl font-black mb-1 md:mb-2" id="remaining">0</p>
                     <p class="text-xs md:text-sm opacity-80">giáo viên</p>
                 </div>
             </div>
 
-            <!-- Progress Bar GV -->
             <div class="mt-4 md:mt-6 glass-effect rounded-xl md:rounded-2xl shadow-xl p-4 md:p-6">
                 <div class="flex items-center justify-between mb-3 md:mb-4">
                     <h3 class="text-base md:text-xl font-black text-gray-800">Tiến độ giáo viên</h3>
@@ -262,7 +318,6 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                <!-- 36 tiết -->
                 <div class="stat-card glass-effect rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 border-2 md:border-4 border-blue-200">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <div class="flex items-center gap-2 md:gap-3">
@@ -275,13 +330,10 @@
                             <span class="text-xs md:text-base font-black text-blue-700" id="percent36">0%</span>
                         </div>
                     </div>
-                    <p class="text-4xl md:text-6xl font-black text-blue-900 mb-2 md:mb-3" id="install36">
-                        <span class="loading-spinner"></span>
-                    </p>
+                    <p class="text-4xl md:text-6xl font-black text-blue-900 mb-2 md:mb-3" id="install36">0</p>
                     <p class="text-sm md:text-base text-blue-700 font-bold">trường đăng ký</p>
                 </div>
                 
-                <!-- 72 tiết -->
                 <div class="stat-card glass-effect rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 border-2 md:border-4 border-green-200">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <div class="flex items-center gap-2 md:gap-3">
@@ -294,13 +346,10 @@
                             <span class="text-xs md:text-base font-black text-green-700" id="percent72">0%</span>
                         </div>
                     </div>
-                    <p class="text-4xl md:text-6xl font-black text-green-900 mb-2 md:mb-3" id="install72">
-                        <span class="loading-spinner"></span>
-                    </p>
+                    <p class="text-4xl md:text-6xl font-black text-green-900 mb-2 md:mb-3" id="install72">0</p>
                     <p class="text-sm md:text-base text-green-700 font-bold">trường đăng ký</p>
                 </div>
                 
-                <!-- 108 tiết -->
                 <div class="stat-card glass-effect rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8 border-2 md:border-4 border-yellow-200">
                     <div class="flex items-center justify-between mb-3 md:mb-4">
                         <div class="flex items-center gap-2 md:gap-3">
@@ -313,9 +362,7 @@
                             <span class="text-xs md:text-base font-black text-yellow-700" id="percent108">0%</span>
                         </div>
                     </div>
-                    <p class="text-4xl md:text-6xl font-black text-yellow-900 mb-2 md:mb-3" id="install108">
-                        <span class="loading-spinner"></span>
-                    </p>
+                    <p class="text-4xl md:text-6xl font-black text-yellow-900 mb-2 md:mb-3" id="install108">0</p>
                     <p class="text-sm md:text-base text-yellow-700 font-bold">trường đăng ký</p>
                 </div>
             </div>
@@ -325,13 +372,11 @@
 
         <!-- BIỂU ĐỒ -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8 fade-in">
-            <!-- Bar Chart -->
             <div class="glass-effect rounded-xl md:rounded-2xl shadow-2xl p-4 md:p-6">
                 <div class="flex items-center justify-between mb-4 md:mb-6">
                     <h2 class="text-lg md:text-2xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-2 md:gap-3">
                         <span class="text-2xl md:text-3xl">📊</span>
-                        <span class="hidden sm:inline">Thống kê tổng quan</span>
-                        <span class="sm:hidden">Tổng quan</span>
+                        <span>Thống kê tổng quan</span>
                     </h2>
                 </div>
                 <div style="height: 280px; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 0.75rem; padding: 1rem;">
@@ -339,13 +384,11 @@
                 </div>
             </div>
             
-            <!-- Pie Chart -->
             <div class="glass-effect rounded-xl md:rounded-2xl shadow-2xl p-4 md:p-6">
                 <div class="flex items-center justify-between mb-4 md:mb-6">
                     <h2 class="text-lg md:text-2xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent flex items-center gap-2 md:gap-3">
                         <span class="text-2xl md:text-3xl">🥧</span>
-                        <span class="hidden sm:inline">Phân bổ số tiết</span>
-                        <span class="sm:hidden">Số tiết</span>
+                        <span>Phân bổ số tiết</span>
                     </h2>
                 </div>
                 <div style="height: 280px; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 0.75rem; padding: 1rem;">
@@ -389,17 +432,33 @@
 
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const SHEET_ID = '1XRwutbGBYRj_gclLjcWc5E4sbP5nKdbehJfb8heWr-g';
         const SHEET_NAME = 'Tổng';
-        const AUTO_REFRESH_INTERVAL = 30000;
+        const AUTO_REFRESH_INTERVAL = 3000; // 3 giây
         const TOTAL_SCHOOLS = 192;
         
         let barChart, pieChart;
-        let autoRefreshEnabled = false;
+        let autoRefreshEnabled = true; // Mặc định BẬT auto
         let autoRefreshTimer = null;
+        let countdownTimer = null;
         let lastFetchTime = null;
+        let isFetching = false;
+        let previousData = null; // Lưu dữ liệu lần trước để so sánh
+
+        function dataHasChanged(newData) {
+            if (!previousData) return true;
+            
+            // So sánh tất cả các trường quan trọng
+            return previousData.approvedInstall !== newData.approvedInstall ||
+                   previousData.installed !== newData.installed ||
+                   previousData.remainingTeachers !== newData.remainingTeachers ||
+                   previousData.schoolsInstalled !== newData.schoolsInstalled ||
+                   previousData.moreThan10PC !== newData.moreThan10PC ||
+                   previousData.install36 !== newData.install36 ||
+                   previousData.install72 !== newData.install72 ||
+                   previousData.install108 !== newData.install108;
+        }
 
         function parseValue(cellValue) {
             if (cellValue === null || cellValue === undefined) return 0;
@@ -423,38 +482,107 @@
             return 0;
         }
 
+        function startCountdown() {
+            const countdownContainer = document.getElementById('countdownContainer');
+            const countdownText = document.getElementById('countdownText');
+            const countdownCircle = document.getElementById('countdownCircle');
+            const circumference = 87.96;
+            
+            countdownContainer.style.display = 'block';
+            
+            let timeLeft = AUTO_REFRESH_INTERVAL / 1000;
+            countdownText.textContent = timeLeft;
+            
+            if (countdownTimer) clearInterval(countdownTimer);
+            
+            countdownTimer = setInterval(() => {
+                timeLeft--;
+                countdownText.textContent = timeLeft;
+                
+                const progress = timeLeft / (AUTO_REFRESH_INTERVAL / 1000);
+                const offset = circumference * (1 - progress);
+                countdownCircle.style.strokeDashoffset = offset;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdownTimer);
+                }
+            }, 1000);
+        }
+
+        function stopCountdown() {
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+                countdownTimer = null;
+            }
+            document.getElementById('countdownContainer').style.display = 'none';
+        }
+
         function toggleAutoRefresh() {
             autoRefreshEnabled = !autoRefreshEnabled;
             const btn = document.getElementById('autoRefreshBtn');
             const icon = document.getElementById('autoRefreshIcon');
             
             if (autoRefreshEnabled) {
-                btn.className = 'flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl border-2 border-green-600';
+                btn.className = 'btn-auto active flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-5 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-2xl border-2 border-green-400';
                 icon.textContent = '▶️';
-                autoRefreshTimer = setInterval(fetchData, AUTO_REFRESH_INTERVAL);
+                
+                fetchData();
+                autoRefreshTimer = setInterval(() => {
+                    fetchData();
+                }, AUTO_REFRESH_INTERVAL);
+                
+                console.log('✅ Auto-refresh BẬT: Làm mới mỗi', AUTO_REFRESH_INTERVAL / 1000, 'giây');
             } else {
-                btn.className = 'flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-5 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl border-2 border-gray-200';
+                btn.className = 'btn-auto flex items-center gap-2 bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-700 px-5 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl border-2 border-gray-300';
                 icon.textContent = '⏸️';
+                
                 if (autoRefreshTimer) {
                     clearInterval(autoRefreshTimer);
                     autoRefreshTimer = null;
                 }
+                stopCountdown();
+                
+                console.log('⏸️ Auto-refresh TẮT');
+            }
+        }
+
+        function manualRefresh() {
+            if (autoRefreshTimer) {
+                clearInterval(autoRefreshTimer);
+            }
+            stopCountdown();
+            
+            fetchData();
+            
+            if (autoRefreshEnabled) {
+                autoRefreshTimer = setInterval(() => {
+                    fetchData();
+                }, AUTO_REFRESH_INTERVAL);
             }
         }
 
         async function fetchData() {
+            if (isFetching) {
+                console.log('⏭️ Đang fetch, bỏ qua lần này');
+                return;
+            }
+            
+            isFetching = true;
             const btn = document.getElementById('refreshBtn');
             const icon = document.getElementById('refreshIcon');
             
             btn.disabled = true;
-            icon.className = 'loading-spinner';
+            icon.classList.add('spinning');
+            stopCountdown();
 
             try {
                 const cells = ['R4', 'R5', 'R6', 'O4', 'O9', 'O10', 'O12', 'O13', 'O14'];
                 
                 const responses = await Promise.all(
                     cells.map(cell => 
-                        fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}&range=${cell}`)
+                        fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}&range=${cell}`, {
+                            cache: 'no-cache'
+                        })
                     )
                 );
                 
@@ -484,20 +612,44 @@
                     install108: values[8] || 0
                 };
                 
-                updateUI(data);
-                lastFetchTime = new Date();
+                // Kiểm tra xem có thay đổi không
+                const hasChanged = dataHasChanged(data);
                 
-                document.getElementById('statusIndicator').className = 'w-3 h-3 rounded-full bg-green-500 pulse-dot';
-                document.getElementById('lastUpdate').textContent = '✅ Cập nhật: ' + lastFetchTime.toLocaleString('vi-VN');
+                if (hasChanged) {
+                    console.log('🆕 Phát hiện dữ liệu mới - Cập nhật UI');
+                    updateUI(data);
+                    previousData = {...data}; // Lưu lại dữ liệu mới
+                    
+                    document.getElementById('statusIndicator').className = 'w-3 h-3 rounded-full bg-green-500 pulse-dot';
+                    lastFetchTime = new Date();
+                    const timeStr = lastFetchTime.toLocaleTimeString('vi-VN');
+                    const autoStatus = autoRefreshEnabled ? ' 🔄 Auto ON' : '';
+                    document.getElementById('lastUpdate').textContent = '✅ Cập nhật: ' + timeStr + autoStatus;
+                    
+                    console.log('✅ UI đã cập nhật lúc', timeStr);
+                } else {
+                    console.log('⏭️ Không có thay đổi - Bỏ qua cập nhật UI');
+                    const timeStr = new Date().toLocaleTimeString('vi-VN');
+                    const autoStatus = autoRefreshEnabled ? ' 🔄 Auto ON' : '';
+                    document.getElementById('lastUpdate').textContent = '✅ Đã kiểm tra: ' + timeStr + autoStatus + ' (Không đổi)';
+                }
                 
             } catch (error) {
-                console.error('Error:', error);
+                console.error('❌ Error:', error);
                 document.getElementById('statusIndicator').className = 'w-3 h-3 rounded-full bg-red-500 pulse-dot';
                 document.getElementById('lastUpdate').textContent = '❌ Lỗi: ' + error.message;
             } finally {
+                isFetching = false;
                 btn.disabled = false;
-                icon.className = '';
-                icon.textContent = '🔄';
+                
+                // Đợi animation hoàn thành rồi mới remove class
+                setTimeout(() => {
+                    icon.classList.remove('spinning');
+                }, 800);
+                
+                if (autoRefreshEnabled) {
+                    startCountdown();
+                }
             }
         }
 
@@ -619,9 +771,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { 
-                            display: false 
-                        },
+                        legend: { display: false },
                         tooltip: {
                             backgroundColor: 'rgba(0, 0, 0, 0.9)',
                             padding: 16,
@@ -647,9 +797,7 @@
                             }
                         },
                         x: {
-                            grid: {
-                                display: false
-                            },
+                            grid: { display: false },
                             ticks: {
                                 font: { size: 11, weight: '600' },
                                 color: '#4b5563'
@@ -661,7 +809,6 @@
 
             // Pie Chart
             const pieCtx = document.getElementById('pieChart').getContext('2d');
-            
             pieChart = new Chart(pieCtx, {
                 type: 'doughnut',
                 data: {
@@ -714,7 +861,14 @@
         }
 
         window.onload = () => {
+            console.log('🚀 Khởi động ứng dụng...');
+            console.log('✅ Auto-refresh mặc định: BẬT');
             fetchData();
+            
+            // Bắt đầu auto-refresh ngay từ đầu
+            autoRefreshTimer = setInterval(() => {
+                fetchData();
+            }, AUTO_REFRESH_INTERVAL);
         };
     </script>
 </body>
