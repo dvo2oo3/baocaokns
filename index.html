@@ -188,6 +188,39 @@
             color: #e5e7eb;
         }
         
+        /* Dark mode for "Phân Bổ Số Tiết" section */
+        body.dark-mode .stat-card.glass-effect {
+            background: rgba(30, 30, 45, 0.85);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        body.dark-mode .text-blue-900 {
+            color: #93c5fd !important;
+        }
+        body.dark-mode .text-blue-700 {
+            color: #93c5fd !important;
+        }
+        body.dark-mode .text-green-900 {
+            color: #86efac !important;
+        }
+        body.dark-mode .text-green-700 {
+            color: #86efac !important;
+        }
+        body.dark-mode .text-yellow-900 {
+            color: #fde047 !important;
+        }
+        body.dark-mode .text-yellow-700 {
+            color: #fde047 !important;
+        }
+        body.dark-mode .bg-blue-100 {
+            background: rgba(59, 130, 246, 0.2) !important;
+        }
+        body.dark-mode .bg-green-100 {
+            background: rgba(34, 197, 94, 0.2) !important;
+        }
+        body.dark-mode .bg-yellow-100 {
+            background: rgba(251, 191, 36, 0.2) !important;
+        }
+        
         .stat-card {
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -849,16 +882,49 @@
                     
                     updateWeatherDisplay();
                     updateWeatherBackground();
+                    autoAdjustThemeByTime();
                 }
             } catch (error) {
                 console.error('Weather fetch error:', error);
+                const now = new Date();
+                const hour = now.getHours();
                 currentWeather = {
                     temp: 25,
                     code: 0,
-                    isDay: new Date().getHours() >= 6 && new Date().getHours() < 18
+                    isDay: hour >= 6 && hour < 18
                 };
                 updateWeatherDisplay();
                 updateWeatherBackground();
+                autoAdjustThemeByTime();
+            }
+        }
+
+        function autoAdjustThemeByTime() {
+            if (!currentWeather) return;
+            
+            const shouldBeDark = !currentWeather.isDay;
+            
+            if (shouldBeDark && !isDarkMode) {
+                isDarkMode = true;
+                document.body.classList.add('dark-mode');
+                updateThemeButton();
+            } else if (!shouldBeDark && isDarkMode) {
+                isDarkMode = false;
+                document.body.classList.remove('dark-mode');
+                updateThemeButton();
+            }
+        }
+
+        function updateThemeButton() {
+            const icon = document.getElementById('themeIcon');
+            const text = document.getElementById('themeText');
+            
+            if (isDarkMode) {
+                icon.textContent = '☀️';
+                text.textContent = 'Chế độ sáng';
+            } else {
+                icon.textContent = '🌙';
+                text.textContent = 'Chế độ tối';
             }
         }
 
