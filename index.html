@@ -39,59 +39,108 @@
             margin: 2rem 0;
         }
         
-        /* COUNTDOWN BAR - PREMIUM */
-        .countdown-bar-container {
-            width: 80px;
-            height: 8px;
-            position: relative;
-            background: linear-gradient(90deg, #e5e7eb 0%, #d1d5db 100%);
-            border-radius: 9999px;
-            overflow: hidden;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        /* COUNTDOWN - PREMIUM REDESIGN */
+        .countdown-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .countdown-bar-container.hidden {
+        .countdown-container.hidden {
             opacity: 0;
-            transform: scale(0.5);
+            transform: scale(0.8);
             pointer-events: none;
         }
-        .countdown-bar {
-            height: 100%;
-            width: 100%;
-            background: linear-gradient(90deg, #10b981 0%, #059669 50%, #10b981 100%);
-            background-size: 200% 100%;
-            border-radius: 9999px;
-            transition: width 1s linear;
+        
+        /* Circular countdown */
+        .countdown-circle {
             position: relative;
-            animation: shimmer-bar 2s ease-in-out infinite;
-            box-shadow: 0 0 12px rgba(16, 185, 129, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+            width: 48px;
+            height: 48px;
         }
-        .countdown-bar::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 4px;
+        .countdown-circle svg {
+            transform: rotate(-90deg);
+            width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 0 9999px 9999px 0;
-            box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
         }
-        .countdown-bar.warning {
-            animation: pulse-bar 0.5s ease-in-out infinite, shimmer-bar 2s ease-in-out infinite;
+        .countdown-circle-bg {
+            fill: none;
+            stroke: #e5e7eb;
+            stroke-width: 4;
         }
-        @keyframes shimmer-bar {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .countdown-circle-progress {
+            fill: none;
+            stroke: url(#gradient);
+            stroke-width: 4;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s linear;
+            filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.5));
         }
-        @keyframes pulse-bar {
+        .countdown-circle-progress.warning {
+            stroke: url(#gradientWarning);
+            animation: pulse-stroke 0.6s ease-in-out infinite;
+        }
+        @keyframes pulse-stroke {
             0%, 100% { 
-                box-shadow: 0 0 12px rgba(16, 185, 129, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+                filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6));
             }
             50% { 
-                box-shadow: 0 0 20px rgba(16, 185, 129, 1), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+                filter: drop-shadow(0 0 12px rgba(239, 68, 68, 1));
             }
+        }
+        .countdown-number {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.3s ease;
+        }
+        .countdown-number.warning {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: bounce-number 0.6s ease-in-out infinite;
+        }
+        @keyframes bounce-number {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.15); }
+        }
+        
+        /* Text label */
+        .countdown-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .countdown-label-main {
+            font-size: 12px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .countdown-label-sub {
+            font-size: 14px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .countdown-label-sub.warning {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         /* STATUS BADGE - PREMIUM */
@@ -257,8 +306,29 @@
                     </div>
                 </div>
                 <div class="flex gap-3 items-center">
-                    <div id="countdownContainer" class="countdown-bar-container">
-                        <div id="countdownBar" class="countdown-bar"></div>
+                    <div id="countdownContainer" class="countdown-container">
+                        <div class="countdown-circle">
+                            <svg viewBox="0 0 48 48">
+                                <defs>
+                                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                                    </linearGradient>
+                                    <linearGradient id="gradientWarning" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="countdown-circle-bg" cx="24" cy="24" r="20"></circle>
+                                <circle id="countdownCircle" class="countdown-circle-progress" cx="24" cy="24" r="20" 
+                                    stroke-dasharray="125.66" stroke-dashoffset="0"></circle>
+                            </svg>
+                            <div id="countdownNumber" class="countdown-number">10</div>
+                        </div>
+                        <div class="countdown-label">
+                            <span class="countdown-label-main">Cập nhật</span>
+                            <span id="countdownText" class="countdown-label-sub">sau 10s</span>
+                        </div>
                     </div>
                     <button 
                         onclick="toggleAutoRefresh()" 
@@ -600,15 +670,24 @@
 
         function startCountdown() {
             const countdownContainer = document.getElementById('countdownContainer');
-            const countdownBar = document.getElementById('countdownBar');
+            const countdownCircle = document.getElementById('countdownCircle');
+            const countdownNumber = document.getElementById('countdownNumber');
+            const countdownText = document.getElementById('countdownText');
             
             countdownContainer.classList.remove('hidden');
-            countdownBar.classList.remove('warning');
+            countdownCircle.classList.remove('warning');
+            countdownNumber.classList.remove('warning');
+            countdownText.classList.remove('warning');
             
             let timeLeft = AUTO_REFRESH_INTERVAL / 1000;
             const totalTime = AUTO_REFRESH_INTERVAL / 1000;
+            const circumference = 2 * Math.PI * 20; // 2πr where r=20 (125.6)
             
-            countdownBar.style.width = '100%';
+            // Set initial values
+            countdownCircle.setAttribute('stroke-dasharray', circumference);
+            countdownCircle.style.strokeDashoffset = '0';
+            countdownNumber.textContent = timeLeft;
+            countdownText.textContent = `sau ${timeLeft}s`;
             
             if (countdownTimer) clearInterval(countdownTimer);
             
@@ -616,11 +695,21 @@
                 timeLeft--;
                 
                 if (timeLeft >= 0) {
-                    const progress = (timeLeft / totalTime) * 100;
-                    countdownBar.style.width = progress + '%';
+                    const progress = timeLeft / totalTime;
+                    const offset = circumference * (1 - progress);
+                    countdownCircle.style.strokeDashoffset = offset;
+                    countdownNumber.textContent = timeLeft;
+                    countdownText.textContent = `sau ${timeLeft}s`;
                     
-                    if (timeLeft === 1) {
-                        countdownBar.classList.add('warning');
+                    // Warning effect khi còn 3 giây
+                    if (timeLeft <= 3 && timeLeft > 0) {
+                        countdownCircle.classList.add('warning');
+                        countdownNumber.classList.add('warning');
+                        countdownText.classList.add('warning');
+                    } else {
+                        countdownCircle.classList.remove('warning');
+                        countdownNumber.classList.remove('warning');
+                        countdownText.classList.remove('warning');
                     }
                 }
                 
@@ -636,9 +725,14 @@
                 countdownTimer = null;
             }
             const countdownContainer = document.getElementById('countdownContainer');
-            const countdownBar = document.getElementById('countdownBar');
+            const countdownCircle = document.getElementById('countdownCircle');
+            const countdownNumber = document.getElementById('countdownNumber');
+            const countdownText = document.getElementById('countdownText');
+            
             countdownContainer.classList.add('hidden');
-            countdownBar.classList.remove('warning');
+            countdownCircle.classList.remove('warning');
+            countdownNumber.classList.remove('warning');
+            countdownText.classList.remove('warning');
         }
 
         function toggleAutoRefresh() {
