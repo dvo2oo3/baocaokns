@@ -181,6 +181,7 @@
             border-radius: 20px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             font-weight: 600;
+            display: contents;
         }
 
         body.dark-mode .weather-info {
@@ -456,16 +457,9 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
-            min-width: 200px; /* ✅ THÊM DÒNG NÀY */
-            justify-content: flex-start; /* ✅ THÊM DÒNG NÀY */
-
+            min-width: 180px; /* Mobile nhỏ hơn */
+            justify-content: flex-start;
         }
-        @media (min-width: 640px) {
-    .status-badge {
-        min-width: 240px; /* Desktop rộng hơn */
-    }
-}
-
         .status-badge::before {
             content: '';
             position: absolute;
@@ -696,7 +690,7 @@
                         </div>
                         <div class="weather-info">
                             <div style="display: flex; align-items: center; gap: 6px;">
-                                <span id="weatherIcon" style="font-size: 18px;">🌤️</span>
+                                <span id="weatherIcon" class="hidden md:inline" style="font-size: 18px;">🌤️</span>
                                 <div style="line-height: 1.3;">
                                     <div id="weatherDesc" style="font-size: 11px; font-weight: 600;">Đang tải...</div>
                                     <div id="weatherTemp" style="font-size: 10px; opacity: 0.7; margin-top: 1px;">Hà Nội
@@ -1669,8 +1663,7 @@
                     statusBadge.className = 'status-badge success';
                     lastFetchTime = new Date();
                     const timeStr = lastFetchTime.toLocaleTimeString('vi-VN');
-                    const autoStatus = autoRefreshEnabled ? '' : '';
-                    // const autoStatus = autoRefreshEnabled ? '🔄' : '';
+                    const autoStatus = autoRefreshEnabled ? ' 🔄' : '';
                     
                     lastUpdate.textContent = 'Cập nhật: ' + timeStr + autoStatus;
 
