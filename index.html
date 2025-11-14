@@ -456,7 +456,15 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
+            min-width: 200px; /* ✅ THÊM DÒNG NÀY */
+            justify-content: flex-start; /* ✅ THÊM DÒNG NÀY */
+
         }
+        @media (min-width: 640px) {
+    .status-badge {
+        min-width: 240px; /* Desktop rộng hơn */
+    }
+}
 
         .status-badge::before {
             content: '';
@@ -1661,7 +1669,9 @@
                     statusBadge.className = 'status-badge success';
                     lastFetchTime = new Date();
                     const timeStr = lastFetchTime.toLocaleTimeString('vi-VN');
-                    const autoStatus = autoRefreshEnabled ? ' 🔄' : '';
+                    const autoStatus = autoRefreshEnabled ? '' : '';
+                    // const autoStatus = autoRefreshEnabled ? '🔄' : '';
+                    
                     lastUpdate.textContent = 'Cập nhật: ' + timeStr + autoStatus;
 
                     console.log('✅ UI đã cập nhật lúc', timeStr);
