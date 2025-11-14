@@ -167,6 +167,7 @@
             gap: 8px;
             font-weight: 700;
             font-size: 14px;
+            /* max-width: 160px; */
         }
 
         .theme-toggle:hover {
@@ -637,6 +638,122 @@
                 transform: rotate(360deg) scale(1);
             }
         }
+        @keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.9;
+    }
+}
+
+@keyframes float-cloud {
+    0%, 100% {
+        transform: translateX(0) translateY(0);
+    }
+    50% {
+        transform: translateX(8px) translateY(-2px);
+    }
+}
+
+/* ===== TOGGLE SWITCH NGÀY ĐÊM ===== */
+.day-night-switch {
+    position: relative;
+    width: 90px;
+    height: 44px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.day-night-switch:hover {
+    transform: scale(1.05);
+}
+
+.switch-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #312e81 100%);
+    border-radius: 50px;
+    border: 4px solid #fbbf24;
+    overflow: visible;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.switch-thumb {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    background: radial-gradient(circle, #f0f0f0 0%, #d0d0d0 100%);
+    border-radius: 50%;
+    top: 50%;
+    left: 3px;
+    transform: translateY(-50%);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 15px rgba(240, 240, 240, 0.6), inset 0 -2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    border: 2px solid #333;
+}
+
+.switch-icon {
+    font-size: 20px;
+    filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.5));
+}
+
+.switch-stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.star-small {
+    position: absolute;
+    font-size: 8px;
+    animation: twinkle 2s ease-in-out infinite;
+    opacity: 0.9;
+}
+
+/* Chế độ sáng (Light Mode) */
+.day-night-switch.light .switch-track {
+    background: linear-gradient(135deg, #87CEEB 0%, #E0F6FF 50%, #FFF4E6 100%);
+    border-color: #f59e0b;
+}
+
+.day-night-switch.light .switch-thumb {
+    left: calc(100% - 37px);
+    background: radial-gradient(circle, #FFD700 0%, #FFA500 100%);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), inset 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.day-night-switch.light .switch-stars {
+    opacity: 0;
+}
+
+@media (max-width: 640px) {
+    .day-night-switch {
+        width: 75px;
+        height: 38px;
+    }
+    
+    .switch-thumb {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .switch-icon {
+        font-size: 18px;
+    }
+}
     </style>
 </head>
 
@@ -741,10 +858,18 @@
                         <span id="themeText" class="hidden sm:inline">Chế độ tối</span>
                     </button> -->
 
-                    <button class="theme-toggle" onclick="toggleTheme()">
-                        <span id="themeIcon">🌙</span>
-                        <span id="themeText" class="hidden sm:inline">Chế độ tối</span>
-                    </button>
+<div class="day-night-switch" onclick="toggleTheme()">
+    <div class="switch-track">
+        <div class="switch-thumb" id="switchThumb">
+            <span class="switch-icon">🌙</span>
+        </div>
+        <div class="switch-stars">
+            <span class="star-small" style="left: 50%; top: 30%;">⭐</span>
+            <span class="star-small" style="left: 65%; top: 50%;">⭐</span>
+            <span class="star-small" style="left: 60%; top: 70%;">⭐</span>
+        </div>
+    </div>
+</div>
                     <button onclick="testDayNight()" class="theme-toggle"
                         style="background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%); color: white; border-color: rgba(251, 146, 60, 0.5);">
                         <span id="dayNightIcon">☀️</span>
@@ -1141,25 +1266,27 @@
         //     }
         // }
 
-        function autoAdjustThemeByTime() {
-            if (!currentWeather) return;
+function autoAdjustThemeByTime() {
+    if (!currentWeather) return;
 
-            const shouldBeDark = !currentWeather.isDay;
+    // THÊM FLAG kiểm tra: Chỉ auto khi KHÔNG phải test mode
+    if (window.isTestMode) return; // BỎ QUA nếu đang test BGR
 
-            // Chỉ cập nhật khi có thay đổi
-            if (shouldBeDark !== isDarkMode) {
-                isDarkMode = shouldBeDark;
+    const shouldBeDark = !currentWeather.isDay;
 
-                if (isDarkMode) {
-                    document.body.classList.add('dark-mode');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                }
+    if (shouldBeDark !== isDarkMode) {
+        isDarkMode = shouldBeDark;
 
-                updateThemeButton();
-                updateWeatherBackground();
-            }
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
         }
+
+        updateThemeButton();
+        updateWeatherBackground();
+    }
+}
 
         function updateThemeButton() {
             const icon = document.getElementById('themeIcon');
@@ -1410,23 +1537,23 @@
             }
         }
 
-        function toggleTheme() {
-            isDarkMode = !isDarkMode;
-            document.body.classList.toggle('dark-mode');
+function toggleTheme() {
+    isDarkMode = !isDarkMode;
+    document.body.classList.toggle('dark-mode');
 
-            const icon = document.getElementById('themeIcon');
-            const text = document.getElementById('themeText');
+    const switchBtn = document.querySelector('.day-night-switch');
+    const switchIcon = document.querySelector('.switch-icon');
+    
+    if (isDarkMode) {
+        switchBtn.classList.remove('light');
+        switchIcon.textContent = '🌙';
+    } else {
+        switchBtn.classList.add('light');
+        switchIcon.textContent = '☀️';
+    }
 
-            if (isDarkMode) {
-                icon.textContent = '☀️';
-                text.textContent = 'Chế độ sáng';
-            } else {
-                icon.textContent = '🌙';
-                text.textContent = 'Chế độ tối';
-            }
-
-            updateWeatherBackground();
-        }
+    updateWeatherBackground();
+}
         // function testDayNight() {
         //     if (!currentWeather) return;
         //     currentWeather.isDay = !currentWeather.isDay;
@@ -1438,18 +1565,111 @@
         //     console.log(`🧪 TEST MODE: Chuyển sang ${currentWeather.isDay ? 'BAN NGÀY ☀️' : 'BAN ĐÊM 🌙'}`);
         // }
 
-        function testDayNight() {
-            if (!currentWeather) return;
-            currentWeather.isDay = !currentWeather.isDay;
+function testDayNight() {
+    if (!currentWeather) return;
+    currentWeather.isDay = !currentWeather.isDay;
 
-            // Cập nhật theme mode (dark/light)
-            autoAdjustThemeByTime();
-
-            const icon = document.getElementById('dayNightIcon');
-            icon.textContent = currentWeather.isDay ? '☀️' : '🌙';
-            console.log(`🧪 TEST MODE: Chuyển sang ${currentWeather.isDay ? 'BAN NGÀY ☀️' : 'BAN ĐÊM 🌙'}`);
+    // Cập nhật background
+    updateWeatherBackground();
+    
+    // THÊM: Đồng bộ dark mode với thời gian
+    isDarkMode = !currentWeather.isDay;
+    if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
+    
+    // THÊM: Cập nhật toggle switch ngày/đêm
+    const switchBtn = document.querySelector('.day-night-switch');
+    const switchIcon = document.querySelector('.switch-icon');
+    
+    if (isDarkMode) {
+        switchBtn.classList.remove('light');
+        switchIcon.textContent = '🌙';
+    } else {
+        switchBtn.classList.add('light');
+        switchIcon.textContent = '☀️';
+    }
+    
+    // Cập nhật nút BGR
+    const icon = document.getElementById('dayNightIcon');
+    const button = icon.closest('.theme-toggle');
+    
+    // Xóa tất cả hiệu ứng cũ
+    const oldEffects = button.querySelectorAll('.star-dot, .cloud-dot, .sun-dot');
+    oldEffects.forEach(e => e.remove());
+    
+    button.style.position = 'relative';
+    button.style.overflow = 'visible';
+    
+    if (currentWeather.isDay) {
+        // BAN NGÀY - Nút BGR
+        icon.textContent = '☀️';
+        button.style.background = 'linear-gradient(135deg, #87CEEB 0%, #E0F6FF 50%, #FFF4E6 100%)';
+        button.style.borderColor = 'rgba(251, 191, 36, 0.5)';
+        button.style.boxShadow = '0 0 25px rgba(251, 191, 36, 0.3)';
+         button.style.color = '#000000'; // Chữ màu đen ban ngày
+        
+        // Mặt trời
+        const sun = document.createElement('div');
+        sun.className = 'sun-dot';
+        sun.style.position = 'absolute';
+        sun.style.width = '8px';
+        sun.style.height = '8px';
+        sun.style.background = 'radial-gradient(circle, #FFD700 0%, #FFA500 100%)';
+        sun.style.borderRadius = '50%';
+        sun.style.right = '8px';
+        sun.style.top = '6px';
+        sun.style.boxShadow = '0 0 6px rgba(255, 215, 0, 0.5)';
+        sun.style.animation = 'pulse 2s ease-in-out infinite';
+        sun.style.zIndex = '1';
+        button.appendChild(sun);
+        
+        // Mây
+        for (let i = 0; i < 2; i++) {
+            const cloud = document.createElement('div');
+            cloud.className = 'cloud-dot';
+            cloud.style.position = 'absolute';
+            cloud.style.width = '6px';
+            cloud.style.height = '3px';
+            cloud.style.background = 'rgba(255, 255, 255, 0.6)';
+            cloud.style.borderRadius = '5px';
+            cloud.style.left = (15 + i * 35) + '%';
+            cloud.style.bottom = '8px';
+            cloud.style.animation = `float-cloud ${3 + i}s ease-in-out infinite`;
+            cloud.style.zIndex = '1';
+            button.appendChild(cloud);
         }
-
+        
+    } else {
+        // BAN ĐÊM - Nút BGR
+        icon.textContent = '🌙';
+        button.style.background = 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #312e81 100%)';
+        button.style.borderColor = 'rgba(99, 102, 241, 0.3)';
+        button.style.boxShadow = '0 0 25px rgba(99, 102, 241, 0.3)';
+        
+        // Sao
+        for (let i = 0; i < 6; i++) {
+            const star = document.createElement('div');
+            star.className = 'star-dot';
+            star.style.position = 'absolute';
+            star.style.width = '2px';
+            star.style.height = '2px';
+            star.style.background = 'white';
+            star.style.borderRadius = '50%';
+            star.style.left = (10 + Math.random() * 75) + '%';
+            star.style.top = (15 + Math.random() * 60) + '%';
+            star.style.animation = `twinkle ${1.5 + Math.random() * 1.5}s ease-in-out infinite`;
+            star.style.animationDelay = Math.random() * 2 + 's';
+            star.style.opacity = Math.random() * 0.4 + 0.3;
+            star.style.zIndex = '1';
+            button.appendChild(star);
+        }
+    }
+    
+    console.log(`🧪 TEST MODE: Chuyển sang ${currentWeather.isDay ? 'BAN NGÀY ☀️' : 'BAN ĐÊM 🌙'}`);
+}
         // ===== DATA FUNCTIONS =====
         function dataHasChanged(newData) {
             if (!previousData) return true;
@@ -1922,17 +2142,23 @@
             });
         }
 
-        window.onload = () => {
-            console.log('🚀 Khởi động ứng dụng...');
+window.onload = () => {
+    console.log('🚀 Khởi động ứng dụng...');
+    
+    // Khởi tạo toggle switch
+    const switchBtn = document.querySelector('.day-night-switch');
+    if (!isDarkMode) {
+        switchBtn.classList.add('light');
+    }
 
-            fetchWeather();
-            setInterval(fetchWeather, 600000);
+    fetchWeather();
+    setInterval(fetchWeather, 600000);
 
-            fetchData();
-            autoRefreshTimer = setInterval(() => {
-                fetchData();
-            }, AUTO_REFRESH_INTERVAL);
-        };
+    fetchData();
+    autoRefreshTimer = setInterval(() => {
+        fetchData();
+    }, AUTO_REFRESH_INTERVAL);
+};
     </script>
 </body>
 
